@@ -112,14 +112,23 @@ hr{
 <select id="periodo">
 
 <option value="0.55">1º Período - Até 2 dias úteis (0,55%)</option>
+
 <option value="1.10">2º Período - De 3 a 5 dias úteis (1,10%)</option>
+
 <option value="1.65">3º Período - De 6 a 10 dias úteis (1,65%)</option>
+
 <option value="3.30">4º Período - De 11 a 20 dias úteis (3,30%)</option>
+
 <option value="4.95">5º Período - De 21 a 30 dias úteis (4,95%)</option>
+
 <option value="6.60">6º Período - De 31 a 40 dias úteis (6,60%)</option>
+
 <option value="8.25">7º Período - De 41 a 50 dias úteis (8,25%)</option>
+
 <option value="9.90">8º Período - De 51 a 60 dias úteis (9,90%)</option>
+
 <option value="11.55">9º Período - De 61 a 70 dias úteis (11,55%)</option>
+
 <option value="13.20">10º Período - De 71 a 80 dias úteis (13,20%)</option>
 
 </select>
@@ -156,23 +165,16 @@ function moeda(valor){
 
 function calcular(){
 
-    let textoCif = document.getElementById("cif").value.trim();
-
-// Remove R$, espaços e qualquer caractere que não seja número, ponto ou vírgula
-textoCif = textoCif.replace(/R\$/gi, "").replace(/\s/g, "");
-
-// Se existir vírgula, ela é o decimal.
-// Remove os pontos (milhar) e troca a vírgula por ponto.
-if (textoCif.includes(",")) {
-    textoCif = textoCif.replace(/\./g, "").replace(",", ".");
-}
-
-let cif = parseFloat(textoCif);
+    let textoCif=document.getElementById("cif").value.trim();
+textoCif=textoCif.replace(/R\$/gi,"").replace(/\s/g,"");
+if(textoCif.includes(",")){textoCif=textoCif.replace(/\./g,"").replace(",",".");}
+let cif=parseFloat(textoCif);
     let kg = parseFloat(document.getElementById("kg").value);
 
     if(isNaN(cif) || isNaN(kg)){
 
         alert("Preencha todos os campos.");
+
         return;
 
     }
@@ -185,8 +187,8 @@ let cif = parseFloat(textoCif);
 
     let armazenagem = cif * (percentual / 100);
 
-    let tabela8Calculada = kg * VALOR_KG;
-    let tabela8 = Math.max(tabela8Calculada, VALOR_MINIMO_TABELA8);
+    let tabela8Calculada=kg*VALOR_KG;
+    let tabela8=Math.max(tabela8Calculada,VALOR_MINIMO_TABELA8);
 
     let total = armazenagem + tabela8;
 
@@ -216,13 +218,8 @@ ${moeda(cif)} × ${percentual.toFixed(2).replace(".",",")}%
 ${kg.toLocaleString('pt-BR')} kg ×
 R$ ${VALOR_KG.toFixed(4).replace(".",",")}
 =
-<b>${moeda(tabela8Calculada)}</b>
-
-${tabela8Calculada < VALOR_MINIMO_TABELA8 ? `
-<br><span style="color:#d35400;font-weight:bold">
-Valor mínimo aplicado: ${moeda(VALOR_MINIMO_TABELA8)}
-</span>
-` : ""}
+<b>${moeda(tabela8)}</b>
+${tabela8Calculada<VALOR_MINIMO_TABELA8?'<br><span style="color:red;font-weight:bold">Valor mínimo aplicado.</span>':''}
 
 <hr>
 
@@ -238,11 +235,24 @@ ${moeda(total)}
 
 }
 
+
+document.getElementById("cif").addEventListener("input", function(e){
+    let v=e.target.value.replace(/\D/g,"");
+    if(v===""){e.target.value="";return;}
+    v=(parseInt(v,10)/100).toFixed(2)+"";
+    let partes=v.split(".");
+    let inteiro=partes[0].replace(/\B(?=(\d{3})+(?!\d))/g,".");
+    e.target.value=inteiro+","+partes[1];
+});
+
 function limpar(){
 
     document.getElementById("cif").value="";
+
     document.getElementById("kg").value="";
+
     document.getElementById("periodo").selectedIndex=0;
+
     document.getElementById("resultado").innerHTML="Preencha os campos e clique em <b>Calcular</b>.";
 
 }
