@@ -112,23 +112,14 @@ hr{
 <select id="periodo">
 
 <option value="0.55">1º Período - Até 2 dias úteis (0,55%)</option>
-
 <option value="1.10">2º Período - De 3 a 5 dias úteis (1,10%)</option>
-
 <option value="1.65">3º Período - De 6 a 10 dias úteis (1,65%)</option>
-
 <option value="3.30">4º Período - De 11 a 20 dias úteis (3,30%)</option>
-
 <option value="4.95">5º Período - De 21 a 30 dias úteis (4,95%)</option>
-
 <option value="6.60">6º Período - De 31 a 40 dias úteis (6,60%)</option>
-
 <option value="8.25">7º Período - De 41 a 50 dias úteis (8,25%)</option>
-
 <option value="9.90">8º Período - De 51 a 60 dias úteis (9,90%)</option>
-
 <option value="11.55">9º Período - De 61 a 70 dias úteis (11,55%)</option>
-
 <option value="13.20">10º Período - De 71 a 80 dias úteis (13,20%)</option>
 
 </select>
@@ -152,6 +143,7 @@ Preencha os campos e clique em <b>Calcular</b>.
 <script>
 
 const VALOR_KG = 0.0675;
+const VALOR_MINIMO_TABELA8 = 22.50;
 
 function moeda(valor){
 
@@ -170,7 +162,6 @@ function calcular(){
     if(isNaN(cif) || isNaN(kg)){
 
         alert("Preencha todos os campos.");
-
         return;
 
     }
@@ -183,7 +174,8 @@ function calcular(){
 
     let armazenagem = cif * (percentual / 100);
 
-    let tabela8 = kg * VALOR_KG;
+    let tabela8Calculada = kg * VALOR_KG;
+    let tabela8 = Math.max(tabela8Calculada, VALOR_MINIMO_TABELA8);
 
     let total = armazenagem + tabela8;
 
@@ -213,7 +205,13 @@ ${moeda(cif)} × ${percentual.toFixed(2).replace(".",",")}%
 ${kg.toLocaleString('pt-BR')} kg ×
 R$ ${VALOR_KG.toFixed(4).replace(".",",")}
 =
-<b>${moeda(tabela8)}</b>
+<b>${moeda(tabela8Calculada)}</b>
+
+${tabela8Calculada < VALOR_MINIMO_TABELA8 ? `
+<br><span style="color:#d35400;font-weight:bold">
+Valor mínimo aplicado: ${moeda(VALOR_MINIMO_TABELA8)}
+</span>
+` : ""}
 
 <hr>
 
@@ -232,11 +230,8 @@ ${moeda(total)}
 function limpar(){
 
     document.getElementById("cif").value="";
-
     document.getElementById("kg").value="";
-
     document.getElementById("periodo").selectedIndex=0;
-
     document.getElementById("resultado").innerHTML="Preencha os campos e clique em <b>Calcular</b>.";
 
 }
