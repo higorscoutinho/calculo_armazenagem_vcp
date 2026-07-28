@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Calculadora DAI - Viracopos</title>
+
+<style>
+
+body{
+    font-family:Segoe UI,Arial,sans-serif;
+    background:#eef2f5;
+    margin:0;
+    padding:30px;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    background:#fff;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 15px rgba(0,0,0,.15);
+}
+
+h2{
+    margin-top:0;
+    color:#006d7c;
+    text-align:center;
+}
+
+label{
+    display:block;
+    margin-top:18px;
+    font-weight:bold;
+}
+
+input, select{
+    width:100%;
+    padding:10px;
+    font-size:16px;
+    box-sizing:border-box;
+}
+
+button{
+    margin-top:20px;
+    width:100%;
+    padding:12px;
+    font-size:17px;
+    border:none;
+    cursor:pointer;
+    border-radius:6px;
+}
+
+.calcular{
+    background:#0097a7;
+    color:white;
+}
+
+.calcular:hover{
+    background:#007b87;
+}
+
+.limpar{
+    background:#666;
+    color:white;
+}
+
+.limpar:hover{
+    background:#444;
+}
+
+.resultado{
+    margin-top:25px;
+    padding:20px;
+    background:#f5fbfc;
+    border-left:5px solid #0097a7;
+    border-radius:5px;
+    line-height:1.9em;
+}
+
+.total{
+    color:#0b8d36;
+    font-size:34px;
+    font-weight:bold;
+    text-align:center;
+}
+
+hr{
+    margin:15px 0;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Calculadora DAI - Viracopos</h2>
+
+<label>Valor CIF (R$)</label>
+<input type="number" id="cif" step="0.01">
+
+<label>Peso Bruto (kg)</label>
+<input type="number" id="kg" step="0.01">
+
+<label>Período de Armazenagem</label>
+
+<select id="periodo">
+
+<option value="0.55">1º Período - Até 2 dias úteis (0,55%)</option>
+
+<option value="1.10">2º Período - De 3 a 5 dias úteis (1,10%)</option>
+
+<option value="1.65">3º Período - De 6 a 10 dias úteis (1,65%)</option>
+
+<option value="3.30">4º Período - De 11 a 20 dias úteis (3,30%)</option>
+
+<option value="4.95">5º Período - De 21 a 30 dias úteis (4,95%)</option>
+
+<option value="6.60">6º Período - De 31 a 40 dias úteis (6,60%)</option>
+
+<option value="8.25">7º Período - De 41 a 50 dias úteis (8,25%)</option>
+
+<option value="9.90">8º Período - De 51 a 60 dias úteis (9,90%)</option>
+
+<option value="11.55">9º Período - De 61 a 70 dias úteis (11,55%)</option>
+
+<option value="13.20">10º Período - De 71 a 80 dias úteis (13,20%)</option>
+
+</select>
+
+<button class="calcular" onclick="calcular()">
+Calcular
+</button>
+
+<button class="limpar" onclick="limpar()">
+Limpar
+</button>
+
+<div id="resultado" class="resultado">
+
+Preencha os campos e clique em <b>Calcular</b>.
+
+</div>
+
+</div>
+
+<script>
+
+const VALOR_KG = 0.0675;
+
+function moeda(valor){
+
+    return valor.toLocaleString('pt-BR',{
+        style:'currency',
+        currency:'BRL'
+    });
+
+}
+
+function calcular(){
+
+    let cif = parseFloat(document.getElementById("cif").value);
+    let kg = parseFloat(document.getElementById("kg").value);
+
+    if(isNaN(cif) || isNaN(kg)){
+
+        alert("Preencha todos os campos.");
+
+        return;
+
+    }
+
+    let combo = document.getElementById("periodo");
+
+    let percentual = parseFloat(combo.value);
+
+    let descricao = combo.options[combo.selectedIndex].text;
+
+    let armazenagem = cif * (percentual / 100);
+
+    let tabela8 = kg * VALOR_KG;
+
+    let total = armazenagem + tabela8;
+
+    document.getElementById("resultado").innerHTML = `
+
+<b>Período Selecionado</b><br>
+${descricao}
+
+<hr>
+
+<b>Tabela 7 - Armazenagem</b><br>
+
+Valor CIF:
+<b>${moeda(cif)}</b><br>
+
+Percentual:
+<b>${percentual.toFixed(2).replace(".",",")}%</b><br><br>
+
+${moeda(cif)} × ${percentual.toFixed(2).replace(".",",")}%
+=
+<b>${moeda(armazenagem)}</b>
+
+<hr>
+
+<b>Tabela 8 - Tarifa por Peso</b><br>
+
+${kg.toLocaleString('pt-BR')} kg ×
+R$ ${VALOR_KG.toFixed(4).replace(".",",")}
+=
+<b>${moeda(tabela8)}</b>
+
+<hr>
+
+<div class="total">
+
+TOTAL DAI<br>
+
+${moeda(total)}
+
+</div>
+
+`;
+
+}
+
+function limpar(){
+
+    document.getElementById("cif").value="";
+
+    document.getElementById("kg").value="";
+
+    document.getElementById("periodo").selectedIndex=0;
+
+    document.getElementById("resultado").innerHTML="Preencha os campos e clique em <b>Calcular</b>.";
+
+}
+
+</script>
+
+</body>
+</html>
